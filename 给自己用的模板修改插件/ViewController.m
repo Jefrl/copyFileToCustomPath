@@ -9,13 +9,23 @@
 #import "ViewController.h"
 
 //=================================================================
-//                       自定义起始路径(即准备将要拷贝的文件夹路径),
-//                            存放路径(即将要存放的文件夹路径)
-//
-// 暂仅供本人需求的习惯场合使用, 后面会慢慢根据多种需求添加, 或自行 fork 添加!
+//          自定义区域说明
+//    1. 起始路径(即准备将要拷贝的文件夹路径),
+//    2. 存放路径(即将要存放的文件夹路径)
+//    3. 每个月最多有31天, 暂按31天自定义; 后面有时间慢慢扩展;
+//    4. 宏定义了当前操作是替换子目录中的文件, 还是重新创建自定义目录
 //=================================================================
-static NSString *fromPath = @"/Users/Jefrl/Desktop/from";
-static NSString *toPath = @"/Users/Jefrl/Desktop/06月";
+static NSString *fromPath = @"/Users/Jefrl/Desktop/小插件测试/from";
+static NSString *toPath = @"/Users/Jefrl/Desktop/小插件测试/06月";
+static NSInteger day = 31;
+#define HXLPathType HXLPathDefault
+
+// 注意: 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名; 其他月份, 年份中就保持 README.md 的名称不变;
+
+typedef NS_ENUM(NSInteger, HXLPath){
+    HXLPathDefault= 0, // 默认非空文件夹内部子目录不变
+    HXLPathCustom = 1  // 空文件夹内重新创建日志的子目录
+};
 
 @interface ViewController ()
 /** 文件管理者 */
@@ -38,12 +48,29 @@ static NSString *toPath = @"/Users/Jefrl/Desktop/06月";
     [super viewDidLoad];
     
     // 初始拷贝
-    [self setupCopy];
+    [self setupCopy:HXLPathType];
     
 }
 
-- (void)setupCopy
+
+
+- (void)setupCopy:(HXLPath)pathType
 {
+    // 处理目标文件, 存放路径下的子目录
+    if (pathType == HXLPathCustom) { // 自定义子目录
+        NSError *error = nil;
+        // 创建子目录
+        for (NSInteger i = 0; i < day; i++) {
+            
+            [self.fm createDirectoryAtPath:[NSString stringWithFormat:@"%@/%02ld", toPath, (long)(i + 1)] withIntermediateDirectories:YES attributes:nil error:&error];
+            
+            if (error != nil) {
+                NSLog(@"%@", error);
+                exit(-1);
+            }
+
+        }
+    }
     // 获取目标文件, 初始路径下的子目录
     NSError *error = nil;
     NSArray *fromPaths = [self.fm contentsOfDirectoryAtPath:fromPath error:&error];
@@ -56,45 +83,22 @@ static NSString *toPath = @"/Users/Jefrl/Desktop/06月";
         if ([fpath containsString:@".DS_Store"]) {
             continue;
         }
-        
+        // 拼接好每个文件的路径
         NSString *subFromPath = [fromPath stringByAppendingPathComponent:fpath];
         // 拷贝
-        [self copyFileFromPath:fpath subFromPath:subFromPath];
+        [self copyFileFromPath:fpath subFromPath:subFromPath andPathType:pathType];
     }
 }
 
-- (void)copyFileFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath
+- (void)copyFileFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath andPathType:(HXLPath)pathType
 {
-    // 找出同名文件路径并删除;
-    [self removeSameNameFileFromPath:fpath];
+    if (pathType == HXLPathDefault) { // 默认内部子目录
+        // 找出同名文件路径并删除;
+        [self removeSameNameFileFromPath:fpath];
+    }
     // 实现拷贝
-    [self copyFromPath:fpath subFromPath:subFromPath];
+    [self copyFromPath:fpath subFromPath:subFromPath andPathType:pathType];
 
-}
-
-- (void)copyFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath
-{
-    // 获取目标文件, 需存放路径下的初级子目录
-    NSError *error = nil;
-    NSArray *toPaths = [self.fm contentsOfDirectoryAtPath:toPath error:&error];
-    if (error != nil) {
-        NSLog(@"%@", error);
-        exit(-1);
-    }
-    
-    for (NSString *tpath in toPaths) { // 实现拷贝
-        if ([tpath containsString:@".DS_Store"] || [tpath containsString:@"README"]) {
-            continue;
-        }
-        
-        NSString *subToPath = [[toPath stringByAppendingPathComponent:tpath] stringByAppendingPathComponent:fpath];
-        
-        [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
-        if (error != nil) {
-            NSLog(@"%@", error);
-            exit(-1);
-        }
-    }
 }
 
 - (void)removeSameNameFileFromPath:(NSString *)fpath
@@ -108,7 +112,8 @@ static NSString *toPath = @"/Users/Jefrl/Desktop/06月";
     }
     
     for (NSString *path in toAllPaths) { // 找出同名文件路径并删除;
-        if ([path containsString:fpath]) {
+        NSString *newFpath = [fpath componentsSeparatedByString:@"."][0];
+        if ([path containsString:newFpath] && ![path isEqualToString:fpath]) { // 同名替换时不替换月份或初级目录下的同名文件
             NSString *removeFilePath = [toPath stringByAppendingPathComponent:path];
             
             NSError *error = nil;
@@ -120,6 +125,67 @@ static NSString *toPath = @"/Users/Jefrl/Desktop/06月";
         }
         
     }
+}
+
+- (void)copyFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath andPathType:(HXLPath)pathType
+{
+    NSError *error = nil;
+    
+    // 获取目标文件, 需存放路径下的初级子目录
+    NSArray *toPaths = [self.fm contentsOfDirectoryAtPath:toPath error:&error];
+    
+    if (error != nil) {
+        NSLog(@"%@", error);
+        exit(-1);
+    }
+    
+    if (pathType == HXLPathCustom) { // 如果是自定义模式
+        if ([fpath isEqualToString:@"README.md"]) {
+            // 月份下后初级子目录下的自述文件单独拷贝一份
+            NSString *subToPath = [toPath stringByAppendingPathComponent:fpath];
+            [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
+            
+            if (error != nil) {
+                NSLog(@"%@", error);
+                exit(-1);
+            }
+            
+        }
+        
+    }
+
+    // 次级子目录的自述文件, 作者自己的特定的习惯命名, 需加上几号
+    for (NSString *tpath in toPaths) { // 实现拷贝
+        NSLog(@"%@", tpath);
+        if ([tpath containsString:@".DS_Store"] || [tpath isEqualToString:@"README.md"]) { // 排除隐藏文件
+            continue;
+        }
+        
+        NSString *subToPath = [toPath stringByAppendingPathComponent:tpath];
+        NSLog(@"%@", subToPath);
+        
+        if ([fpath isEqualToString:@"README.md"]) { // 如果是几号文件夹下的自述文件, 拼接成 "README/tpath.md" 的名称
+           
+            NSString *newSubToPath = [subToPath stringByAppendingPathComponent:[NSString stringWithFormat:@"README%@.md", tpath]];
+            NSLog(@"%@", newSubToPath);
+            [self.fm copyItemAtPath:subFromPath toPath:newSubToPath error:&error];
+            if (error != nil) {
+                NSLog(@"%@", error);
+                exit(-1);
+            }
+            continue;
+        }
+        
+        subToPath = [subToPath stringByAppendingPathComponent:fpath];
+        NSLog(@"%@", subToPath);
+        // 终于可以大胆拷贝了!
+        [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
+        if (error != nil) {
+            NSLog(@"%@", error);
+            exit(-1);
+        }
+    }
+    
 }
 
 
