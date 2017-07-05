@@ -16,11 +16,11 @@
 //    4. 宏定义了当前操作是替换子目录中的文件, 还是重新创建自定义目录
 //=================================================================
 static NSString *fromPath = @"/Users/Jefrl/Desktop/小插件测试/from";
-static NSString *toPath = @"/Users/Jefrl/Desktop/小插件测试/06月";
+static NSString *toPath = @"/Users/Jefrl/Desktop/小插件测试/07月";
 static NSInteger day = 31;
 #define HXLPathType HXLPathDefault
 
-// 注意: 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名; 其他月份, 年份中就保持 README.md 的名称不变;
+// 注意: 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名; 其他月份, 年份中, 考虑到可能写入了内容, 那么在 HXLPathDefault 替换模式下就保持 README.md 文件不替换, 不更改;
 
 typedef NS_ENUM(NSInteger, HXLPath){
     HXLPathDefault= 0, // 默认非空文件夹内部子目录不变
