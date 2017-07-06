@@ -7,25 +7,34 @@
 //
 
 #import "ViewController.h"
+// 需求枚举值;
+typedef NS_ENUM(NSInteger, HXLPath){
+    HXLPathDefault= 0, // 默认最外层文件夹内部子目录不变 (即加入新文件或替换同名文件)
+    HXLPathCustom = 1  // 最外层文件夹为空文件夹, 在其内部重新创建日志的子目录
+};
 
 //=================================================================
 //          自定义区域说明
-//    1. 起始路径(即准备将要拷贝的文件夹路径),
-//    2. 存放路径(即将要存放的文件夹路径)
+//    1. 起始路径(即整理好的将要拷贝的文件夹路径),
+static NSString *fromPath = @"/Users/Jefrl/Desktop/学习随笔/01-日记本/2017 Diary-Git/2017 Diary/大纲优化模板/from";
+//    2. 存放路径(即将要存放的最外层文件夹路径)
+static NSString *toPath = @"/Users/Jefrl/Desktop/学习随笔/01-日记本/2017 Diary-Git/2017 Diary/大纲优化模板/xx月";
 //    3. 每个月最多有31天, 暂按31天自定义; 后面有时间慢慢扩展;
-//    4. 宏定义了当前操作是替换子目录中的文件, 还是重新创建自定义目录
-//=================================================================
-static NSString *fromPath = @"/Users/Jefrl/Desktop/小插件测试/from";
-static NSString *toPath = @"/Users/Jefrl/Desktop/小插件测试/07月";
 static NSInteger day = 31;
+//    4. 宏定义了当前操作是替换子目录中的文件, 还是重新创建自定义目录
 #define HXLPathType HXLPathDefault
+//
+//=================================================================
 
-// 注意: 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名; 其他月份, 年份中, 考虑到可能写入了内容, 那么在 HXLPathDefault 替换模式下就保持 README.md 文件不替换, 不更改;
+// 注意: 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名;
+// 其他月份, 年份中, 考虑到可能写入了内容, 那么在 HXLPathDefault 替换模式下就保持 README.md 文件不替换, 不更改;
 
-typedef NS_ENUM(NSInteger, HXLPath){
-    HXLPathDefault= 0, // 默认非空文件夹内部子目录不变
-    HXLPathCustom = 1  // 空文件夹内重新创建日志的子目录
-};
+//=================================================================
+//          后续想添加的需求记录:
+//       需求一: 指定某个日期(包含这个日期), 从此往后到31日, 均替更新文件
+//=================================================================
+
+
 
 @interface ViewController ()
 /** 文件管理者 */
@@ -113,7 +122,7 @@ typedef NS_ENUM(NSInteger, HXLPath){
     
     for (NSString *path in toAllPaths) { // 找出同名文件路径并删除;
         NSString *newFpath = [fpath componentsSeparatedByString:@"."][0];
-        if ([path containsString:newFpath] && ![path isEqualToString:fpath]) { // 同名替换时不替换月份或初级目录下的同名文件
+        if ([path containsString:newFpath] && ![path isEqualToString:fpath] && ![path containsString:@".DS_Store"]) { // 同名替换时不替换月份或初级目录下的同名文件
             NSString *removeFilePath = [toPath stringByAppendingPathComponent:path];
             
             NSError *error = nil;
