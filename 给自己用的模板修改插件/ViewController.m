@@ -127,10 +127,11 @@ static NSInteger day = 31;
             
             NSError *error = nil;
             [self.fm removeItemAtPath:removeFilePath error:&error];
-            if (error != nil) {
-                NSLog(@"%@", error);
-                exit(-1);
-            }
+            // 日期目录下的文件或文件夹, 为替换文件, 再深一级的子目录暂无需求, 故注释
+//            if (error != nil) {
+//                NSLog(@"%@", error);
+//                exit(-1);
+//            }
         }
         
     }
