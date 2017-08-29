@@ -16,9 +16,9 @@ typedef NS_ENUM(NSInteger, HXLPath){
 //=================================================================
 //          自定义区域说明
 //    1. 起始路径(即整理好的将要拷贝的文件夹路径),
-static NSString *fromPath = @"/Users/Jefrl/Desktop/学习随笔/01-日记本/2017 Diary-Git/2017 Diary/大纲优化模板/from";
+static NSString *fromPath = @"/Users/Jefrl/Desktop/上海乐住/from";
 //    2. 存放路径(即将要存放的最外层文件夹路径)
-static NSString *toPath = @"/Users/Jefrl/Desktop/学习随笔/01-日记本/2017 Diary-Git/2017 Diary/大纲优化模板/xx月";
+static NSString *toPath = @"/Users/Jefrl/Desktop/上海乐住/to";
 //    3. 每个月最多有31天, 暂按31天自定义; 后面有时间慢慢扩展;
 static NSInteger day = 31;
 //    4. 宏定义了当前操作是替换子目录中的文件, 还是重新创建自定义目录
@@ -39,6 +39,9 @@ static NSInteger day = 31;
 @interface ViewController ()
 /** 文件管理者 */
 @property (nonatomic, readwrite, strong) NSFileManager *fm;
+@property (weak, nonatomic) IBOutlet UITextField *inputTextField;
+@property (weak, nonatomic) IBOutlet UITextField *outputTextField;
+@property (weak, nonatomic) IBOutlet UISwitch *DefaultSwitch;
 
 
 @end
@@ -51,6 +54,9 @@ static NSInteger day = 31;
         _fm = [NSFileManager defaultManager];
     }
     return _fm;
+}
+
+- (IBAction)generateBtnClick:(UIButton *)sender {
 }
 
 - (void)viewDidLoad {
@@ -166,18 +172,18 @@ static NSInteger day = 31;
 
     // 次级子目录的自述文件, 作者自己的特定的习惯命名, 需加上几号
     for (NSString *tpath in toPaths) { // 实现拷贝
-        NSLog(@"%@", tpath);
+        // NSLog(@"%@", tpath);
         if ([tpath containsString:@".DS_Store"] || [tpath isEqualToString:@"README.md"]) { // 排除隐藏文件
             continue;
         }
         
         NSString *subToPath = [toPath stringByAppendingPathComponent:tpath];
-        NSLog(@"%@", subToPath);
+        // NSLog(@"%@", subToPath);
         
         if ([fpath isEqualToString:@"README.md"]) { // 如果是几号文件夹下的自述文件, 拼接成 "README/tpath.md" 的名称
            
             NSString *newSubToPath = [subToPath stringByAppendingPathComponent:[NSString stringWithFormat:@"README%@.md", tpath]];
-            NSLog(@"%@", newSubToPath);
+            // NSLog(@"%@", newSubToPath);
             [self.fm copyItemAtPath:subFromPath toPath:newSubToPath error:&error];
             if (error != nil) {
                 NSLog(@"%@", error);
@@ -187,7 +193,7 @@ static NSInteger day = 31;
         }
         
         subToPath = [subToPath stringByAppendingPathComponent:fpath];
-        NSLog(@"%@", subToPath);
+        // NSLog(@"%@", subToPath);
         // 终于可以大胆拷贝了!
         [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
         if (error != nil) {
