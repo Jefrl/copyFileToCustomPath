@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--日志结构创建-->
+        <!--日志目录便利创建器-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
@@ -41,14 +41,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UNy-Cd-t2l">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" placeholder="01" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UNy-Cd-t2l">
                                 <rect key="frame" x="265" y="243" width="40" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="a3X-eU-UjI"/>
                                 </constraints>
                                 <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="bH3-QR-gXz">
@@ -114,11 +114,11 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CJ4-LX-MHi">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="01" borderStyle="roundedRect" placeholder="01" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CJ4-LX-MHi">
                                 <rect key="frame" x="265" y="288" width="40" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="至 31" borderStyle="roundedRect" placeholder="输入路径或拽入目标文件夹 To" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Dno-xC-M9Z">
@@ -152,6 +152,12 @@
                                     <action selector="generateBtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SRs-VF-DPz"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="程序狗: Jefrl" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qVm-aP-PDu">
+                                <rect key="frame" x="10" y="74" width="85" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.80784313725490198" green="0.80784313725490198" blue="0.80784313725490198" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -167,14 +173,17 @@
                             <constraint firstItem="8rX-CD-gDY" firstAttribute="top" secondItem="Opc-cn-Aj6" secondAttribute="bottom" constant="40" id="Mhl-dh-JpO"/>
                             <constraint firstItem="Dno-xC-M9Z" firstAttribute="leading" secondItem="UNy-Cd-t2l" secondAttribute="trailing" constant="10" id="NLq-bQ-L7i"/>
                             <constraint firstItem="odw-kA-10t" firstAttribute="leading" secondItem="qbu-Zm-LPJ" secondAttribute="leading" id="OxF-Cr-nH4"/>
+                            <constraint firstItem="qVm-aP-PDu" firstAttribute="leading" secondItem="8os-OX-1bf" secondAttribute="leading" id="QuU-nX-jU5"/>
                             <constraint firstItem="UNy-Cd-t2l" firstAttribute="top" secondItem="Dno-xC-M9Z" secondAttribute="top" id="T5p-Zh-hfa"/>
                             <constraint firstItem="mM1-bu-pi1" firstAttribute="height" secondItem="7YF-bV-BuF" secondAttribute="height" id="TWV-uQ-058"/>
                             <constraint firstItem="ylI-hT-SFm" firstAttribute="leading" secondItem="zgs-zJ-TPM" secondAttribute="leading" id="UTU-PK-bRO"/>
                             <constraint firstItem="7YF-bV-BuF" firstAttribute="height" secondItem="bH3-QR-gXz" secondAttribute="height" id="V9x-y5-LVx"/>
+                            <constraint firstItem="qVm-aP-PDu" firstAttribute="height" secondItem="8os-OX-1bf" secondAttribute="height" id="X6B-9B-OsJ"/>
                             <constraint firstItem="7YF-bV-BuF" firstAttribute="leading" secondItem="zgs-zJ-TPM" secondAttribute="trailing" constant="18" id="XFq-uF-BZs"/>
                             <constraint firstAttribute="trailing" secondItem="Dno-xC-M9Z" secondAttribute="trailing" constant="10" id="XH4-kc-iOa"/>
                             <constraint firstItem="gMU-17-MDs" firstAttribute="top" secondItem="zgs-zJ-TPM" secondAttribute="bottom" constant="27" id="XQE-Co-ws1"/>
                             <constraint firstItem="zgs-zJ-TPM" firstAttribute="top" secondItem="odw-kA-10t" secondAttribute="bottom" constant="27" id="XlZ-L7-eYJ"/>
+                            <constraint firstItem="8os-OX-1bf" firstAttribute="top" secondItem="qVm-aP-PDu" secondAttribute="bottom" constant="10" id="Ya7-Ko-wAF"/>
                             <constraint firstItem="G6Y-5B-vX2" firstAttribute="height" secondItem="Dno-xC-M9Z" secondAttribute="height" id="Z7j-Mg-xa0"/>
                             <constraint firstItem="mM1-bu-pi1" firstAttribute="width" secondItem="7YF-bV-BuF" secondAttribute="width" id="ZFp-PC-rWG"/>
                             <constraint firstItem="mM1-bu-pi1" firstAttribute="leading" secondItem="7YF-bV-BuF" secondAttribute="leading" id="ZZu-Su-Wnh"/>
@@ -210,7 +219,7 @@
                             <constraint firstItem="8os-OX-1bf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="10" id="zjk-QD-J7p"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="日志结构创建" id="QYu-0o-uOe"/>
+                    <navigationItem key="navigationItem" title="日志目录便利创建器" id="QYu-0o-uOe"/>
                     <connections>
                         <outlet property="createDiarySwitch" destination="bH3-QR-gXz" id="Yrv-UB-WKf"/>
                         <outlet property="removeDiarySwitch" destination="mM1-bu-pi1" id="v07-hR-hnF"/>

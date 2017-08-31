@@ -6,33 +6,17 @@
 //  Copyright © 2017年 Jefrl. All rights reserved.
 //
 
-//=================================================================
-//          自定义区域说明
-// 1. 每个月最多有31天, 按31天自定义月份天数;
-// 2. 年月日中的文件夹, 几月几号中的几号自述文件 README.md 个人习惯喜欢让文件名加上与几号同名的后缀, 如 10 号就是 README10.md 的命名;
-// 3. 其他月份中, 考虑到可能写入了内容, 那么在 HXLPathExist 替换模式下就确保月份中 README.md 文件不替换, 不更改;
-
-//=================================================================
-//          后续想添加的需求记录: (20170830已完成)
-//       需求一: 指定某个日期(包含这个日期), 从此往后到31日, 均替更新文件
-//    [self generateRequireFile:HXLPathEmpty]; // 空则创建日志结构
-//    [self generateRequireFile:HXLPathExist]; // 非空添加文件
-//    [self generateRequireFile:HXLPathRemove]; // 非空删除文件
-//=================================================================
-
 #import "ViewController.h"
-#import "SVProgressHUD.h"
 
 // 需求枚举值;
 typedef NS_ENUM(NSInteger, HXLPathType){
-    HXLPathEmpty = 0, // 目标文件夹内为空 (用来新创建日志结构)
-    HXLPathExist = 1,  // 目标文件夹内非空 (用来新增文件, 替换同名文件)
+    HXLPathEmpty = 0, // 目标文件夹内为空 (用来新创建, 新的日志结构)
+    HXLPathExist = 1,  // 目标文件夹内非空 (用来新增文件, 若同名则替换同名文件)
     HXLPathRemove = 2 // 目标文件夹内删除指定文件
 };
 
 // 默认所有月份31天
 static NSInteger const day = 31;
-
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *createDiarySwitch;
@@ -45,23 +29,31 @@ static NSInteger const day = 31;
 @property (nonatomic, readwrite, assign) NSInteger appointCount;
 /** 文件管理者 */
 @property (nonatomic, readwrite, strong) NSFileManager *fm;
-/** fromPath 源文件夹路径 (即整理好的将要拷贝的文件夹路径) */
+/** 源文件夹路径 (即整理好的将要拷贝的输入文件夹路径) */
 @property (nonatomic, readwrite, strong) NSString *fromPath;
-/** monthPath 月份文件夹路径 (即将要存放的最外层文件夹路径) */
+/** 月份文件夹路径 (即被操作的输出文件夹路径) */
 @property (nonatomic, readwrite, strong) NSString *monthPath;
-/** operation */
+/** 操作类型 */
 @property (nonatomic, readwrite, assign) HXLPathType operation;
 
 @end
 
 @implementation ViewController
-#pragma mark ===================== 初始化文件配置区域 =====================
+
+//=================================================================
+//          文件路径设置区域
+//          具体使用说明请看 README 自述文件, 并配截图!
+//=================================================================
+#pragma mark =================== 文件路径设置区域 ===================
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // 配置文件路径
-    self.fromPath = @"/Users/Jefrl/Desktop/上海乐住/测试文件/from";
-    self.monthPath = @"/Users/Jefrl/Desktop/上海乐住/测试文件/9月";
+    /** 01. fromPath 源文件夹路径 (即整理好的将要拷贝的输入文件夹路径) */
+    /** 02. monthPath 月份文件夹路径 (即被操作的输出文件夹路径) */
+    self.fromPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/from";
+    self.monthPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/09月";
 }
+
+#pragma mark ===================== GUI 图形界面 segue 区域 =====================
 - (IBAction)createSwitch:(UISwitch *)sender {
     sender.on = !sender.on;
     
@@ -138,7 +130,6 @@ static NSInteger const day = 31;
     }
     
     [self generateRequireFile:self.operation];
-    
 }
 
 #pragma mark ===================== 懒加载区域 =====================
@@ -175,7 +166,7 @@ static NSInteger const day = 31;
     if (operationType == HXLPathExist) { // 2. 目标文件夹内部已有日志结构
         message = @"正在执行, 增添文件或覆盖同名文件操作, 确认执行么 ?!";
         [self handleFileOperationType:operationType message:message handler:^{
-            [self copyFileOperationType:operationType];
+            [self addFileOperationType:operationType];
         }];
     }
     
@@ -200,7 +191,7 @@ static NSInteger const day = 31;
     
     UIAlertAction *determineAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:myBlock];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        NSLog(@"%@", action);
+        // NSLog(@"%@", action);
     }];
     
     [actionSheetController addAction:determineAction];
@@ -247,7 +238,7 @@ static NSInteger const day = 31;
         NSLogError(error)
     }
     // 创建文件
-    [self copyFileOperationType:operationType];
+    [self addFileOperationType:operationType];
 
 }
 
@@ -261,13 +252,13 @@ static NSInteger const day = 31;
     for (NSString *fpath in fromPaths) {
         if ([fpath containsString:@".DS_Store"]) continue; // 过滤
         if (![fpath containsString:@"."]) continue; // 只删除同名文件, 不删同名文件夹;
-        [self removeSameNameFileFromPath:fpath];
+        [self removeSameNameFileFromPath:fpath andOperationType:operationType];
     }
     [SVProgressHUD showSuccessWithStatus:@"删除操作已完成 !"];
     [SVProgressHUD dismissWithDelay:1];
 }
 
-- (void)copyFileOperationType:(HXLPathType)operationType {
+- (void)addFileOperationType:(HXLPathType)operationType {
     if (operationType != HXLPathEmpty) { // 创建操作已经校验过了;
         if ([self invalidDetectionWithOperationType:operationType]) return;
     }
@@ -279,51 +270,60 @@ static NSInteger const day = 31;
     
     for (NSString *fpath in fromPaths) {
         if ([fpath containsString:@".DS_Store"]) continue;
-        // 拼接好每个文件的路径
+        // 拼接所有子文件绝对路径
         NSString *subFromPath = [self.fromPath stringByAppendingPathComponent:fpath];
         // 拷贝
-        if (operationType == HXLPathExist) { // 内部已存在子目录, 那么找出同名文件路径并删除;
-            if (![fpath containsString:@"."]) continue; // 只删除同名文件, 不删同名文件夹;
-            [self removeSameNameFileFromPath:fpath];
+        if (operationType == HXLPathExist) { // 添加或覆盖文件操作, 那么找出同名文件路径并删除;
+            [self removeSameNameFileFromPath:fpath andOperationType:operationType];
+            [self copyFromPath:fpath subFromPath:subFromPath];
         }
-        
-        [self copyFromPath:fpath subFromPath:subFromPath andOperationType:operationType];
+        else { // 创建日志操作
+            [self createFileFromPath:fpath subFromPath:subFromPath];
+        }
     }
-
-    if (operationType == HXLPathEmpty) {
-        [SVProgressHUD showSuccessWithStatus:@"创建操作已完成 !"];
-    } else {
+    
+    if (operationType == HXLPathExist) {
         [SVProgressHUD showSuccessWithStatus:@"增添文件操作已完成 !"];
+    } else {
+        [SVProgressHUD showSuccessWithStatus:@"创建操作已完成 !"];
     }
     [SVProgressHUD dismissWithDelay:1];
 }
 
 #pragma mark ===================== 核心功能性方法 =====================
-- (void)removeSameNameFileFromPath:(NSString *)fpath
+- (void)removeSameNameFileFromPath:(NSString *)fpath andOperationType:(HXLPathType)operationType
 {
     // 获取目标文件, 需存放路径下的所有子目录
     NSError *error = nil;
-    NSArray *toAllPaths = [self.fm subpathsOfDirectoryAtPath:self.monthPath error:&error];
+    NSArray * monthPaths = [self.fm subpathsOfDirectoryAtPath:self.monthPath error:&error];
     NSLogError(error)
     
-    for (NSString *path in toAllPaths) { // 找出同名文件路径并删除;
-        // 同名替换时不替换月份下的 README 文件, 过滤系统文件, 确保只处理文件, 不处理文件夹
-        if ([path isEqualToString:fpath] || [path containsString:@".DS_Store"] || ![path containsString:@"."]) continue;
-        // 获取日期数字
-        NSInteger count = [[path componentsSeparatedByString:@"/"].firstObject integerValue];
-        if (count < self.appointCount) continue; // 日期要大于等于指定日期才执行删除;
+    for (NSString *mpath in monthPaths) { // 找出同名文件路径并删除;
+        if ( [mpath containsString:@".DS_Store"] || [mpath isEqualToString:@"README.md"]) continue; // 系统文件过滤; 月份的自述文件永不操作;
         
-        if ([path containsString:fpath] ) { // 日 期后面的同名路径名 就可以删了
-            NSString *removeFilePath = [self.monthPath stringByAppendingPathComponent:path];
-//            NSLog(@"fpath: %@, path: %@", fpath, path);
+        // 获取日期数字
+        NSString *firstMonthPath = [mpath componentsSeparatedByString:@"/"].firstObject;
+        NSInteger count = [firstMonthPath integerValue];
+        if (count < self.appointCount) continue; // 凡小于指定日期均不执行删除操作;
+        if ([fpath isEqualToString:mpath] || ![mpath containsString:@"/"]) continue; // 月份直接目录下的所有文件月, 文件夹, 避免用户误操作的安全隐患;
+        
+        NSString *newPath = [mpath substringFromIndex:[mpath rangeOfString:@"/"].location + 1]; // 进入操作目录区
+        if (HXLPathRemove == operationType) { // 只有确定的删除操作, 才可以删除同名文件夹
+        } else { // 添加文件与覆盖同名文件的操作, 只处理同名文件, 绝不处理同名文件夹, 坚持安全的设计原则 !!
+            if (![newPath containsString:@"."]) continue;
+        }
+        
+        if ([fpath isEqualToString:newPath]) { // 日期内部的同名路径名删除
+            NSString *removeFilePath = [self.monthPath stringByAppendingPathComponent:mpath];
             
             NSError *error = nil;
             [self.fm removeItemAtPath:removeFilePath error:&error];
             NSLogError(error)
         }
-        // 个人习惯的特殊 README0X 的删除处理
-        if ([fpath containsString:@"README"] && [path containsString:@"README"]) { //
-            NSString *removeFilePath = [self.monthPath stringByAppendingPathComponent:path];
+        // 日期内部, 个人习惯的 README0X 的特殊删除处理
+        if ([fpath isEqualToString:@"README.md"] && [newPath containsString:@"README"]) {
+            NSString *removeFilePath = [self.monthPath stringByAppendingPathComponent:mpath];
+            
             NSError *error = nil;
             [self.fm removeItemAtPath:removeFilePath error:&error];
             NSLogError(error)
@@ -332,82 +332,80 @@ static NSInteger const day = 31;
     }
 }
 
-
-- (void)copyFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath andOperationType:(HXLPathType)operationType
+- (void)createFileFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath
 {
-    if (operationType == HXLPathEmpty) { // 目标文件为创建操作, 且源文件夹包含自述文件, 那么
-        if ([fpath isEqualToString:@"README.md"]) { // 月份下后初级子目录下的自述文件单独拷贝一份
-            NSString *subToPath = [self.monthPath stringByAppendingPathComponent:fpath];
-            NSError *error = nil;
-            [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
-            NSLogError(error)
-        }
-    }
-
     // 获取目标文件, 需存放路径下的初级子目录
     NSError *error = nil;
-    NSArray *toPaths = [self.fm contentsOfDirectoryAtPath:self.monthPath error:&error];
+    NSArray *datePaths = [self.fm contentsOfDirectoryAtPath:self.monthPath error:&error];
     NSLogError(error)
-    for (NSString *tpath in toPaths) { // 实现拷贝
-         // NSLog(@"%@", tpath);
-        if ([tpath containsString:@".DS_Store"] || [tpath isEqualToString:@"README.md"]) continue; //排除隐藏文件
-        if (operationType != HXLPathEmpty) { // 非创建操作;
-            NSInteger count = [[tpath componentsSeparatedByString:@"/"].firstObject integerValue];
-            if (count < self.appointCount) continue; // 遍历日期如果小于指定日期, 则过滤掉;
-        }
-        
-        NSString *subToPath = [self.monthPath stringByAppendingPathComponent:tpath];
-         // NSLog(@"%@", subToPath);
-        
-        NSString *newSubToPath;
-        if ([fpath isEqualToString:@"README.md"]) { // 如果是几号文件夹下的自述文件, 个人习惯 README0X 拼接处理
-            newSubToPath = [subToPath stringByAppendingPathComponent:[NSString stringWithFormat:@"README%@.md", tpath]];
-            // NSLog(@"%@", newSubToPath);
-            [self.fm copyItemAtPath:subFromPath toPath:newSubToPath error:&error];
+    
+    if ([fpath isEqualToString:@"README.md"]) { // 来源文件夹包含自述文件, 月份目录下的自述文件拷贝一份
+        NSString *subToPath = [self.monthPath stringByAppendingPathComponent:fpath];
+        NSError *error = nil;
+        [self.fm copyItemAtPath:subFromPath toPath:subToPath error:&error];
+        NSLogError(error)
+    }
+    
+    for (NSString *dateName in datePaths) {
+        if ([dateName containsString:@".DS_Store"] || [dateName isEqualToString:@"README.md"]) continue;
+        NSString *dateFloderPath = [self.monthPath stringByAppendingPathComponent:dateName]; // 日期目录的路径
+        if ([fpath isEqualToString:@"README.md"]) { // 自述文件, 个人习惯 README0X 拼接处理
+            NSString *copyFilePath = [dateFloderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"README%@.md", dateName]];
+            [self.fm copyItemAtPath:subFromPath toPath:copyFilePath error:&error];
             NSLogError(error)
             continue;
         }
-        
-        newSubToPath = [subToPath stringByAppendingPathComponent:fpath];
-        // NSLog(@"%@", newSubToPath);
-        
-        // 终于可以大胆拷贝了!
-        [self.fm copyItemAtPath:subFromPath toPath:newSubToPath error:&error];
-        if (operationType != HXLPathEmpty) {
+        else { // 非自述文件 (其他文件夹, 文件大胆建立)
+            NSString *copyFilePath = [dateFloderPath stringByAppendingPathComponent:fpath];
+            [self.fm copyItemAtPath:subFromPath toPath:copyFilePath error:&error];
             NSLogError(error)
+        }
+    }
+}
+
+
+- (void)copyFromPath:(NSString *)fpath subFromPath:(NSString *)subFromPath
+{
+    // 获取目标文件, 需存放路径下的初级子目录
+    NSError *error = nil;
+    NSArray *monthFilePaths = [self.fm contentsOfDirectoryAtPath:self.monthPath error:&error];
+    NSLogError(error)
+
+    if (![fpath containsString:@"."]) { // 文件夹
+        for (NSString *dateName in monthFilePaths) { // 遍历进入 01 02 ...31
+            if ([dateName containsString:@".DS_Store"] || [dateName isEqualToString:@"README.md"]) continue;
+            if ([dateName integerValue] < self.appointCount) continue;
+            NSString *dateFloderPath = [self.monthPath stringByAppendingPathComponent:dateName];
+            NSArray *dateFolderPaths = [self.fm subpathsOfDirectoryAtPath:dateFloderPath  error:&error];
+            NSLogError(error)
+            if (![dateFolderPaths containsObject:fpath]) { // 写入
+                NSString *copyFolderPath = [dateFloderPath stringByAppendingPathComponent:fpath];
+                [self.fm copyItemAtPath:subFromPath toPath:copyFolderPath error:&error];
+                NSLogError(error)
+            }
+        }
+        
+    }
+    else { // 非文件夹
+        for (NSString *dateName in monthFilePaths) { // 遍历进入 01 02 ...31
+            if ([dateName containsString:@".DS_Store"] || [dateName isEqualToString:@"README.md"]) continue;
+            if ([dateName integerValue] < self.appointCount) continue;
+            NSString *dateFloderPath = [self.monthPath stringByAppendingPathComponent:dateName];
+            // 同名文件交给删除模块搞定了, 直接写入
+            // 如果是自述文件 README.md, 我习惯在名字后面加上日期 README0X.md,
+            if ([fpath isEqualToString:@"README.md"]) {
+                NSString *copyFolderPath = [dateFloderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"README%@.md", dateName]];
+                [self.fm copyItemAtPath:subFromPath toPath:copyFolderPath error:&error];
+                NSLogError(error)
+            }
+            else {
+                NSString *copyFolderPath = [dateFloderPath stringByAppendingPathComponent:fpath];
+                [self.fm copyItemAtPath:subFromPath toPath:copyFolderPath error:&error];
+                NSLogError(error)
+            }
         }
     }
     
 }
-
-
-/*
- Log: (
- ".DS_Store",
- images,
- "job.md",
- "learning.md",
- "life.md",
- "README01.md"
- ) :<--27--$
-
- Log: (
- ".DS_Store",
- 01,
- "01/.DS_Store",
- "01/images",
- "01/job.md",
- "01/learning.md",
- "01/life.md",
- "01/README01.md",
- 02,
- "02/.DS_Store",
- "02/images",
- "02/job.md",
- "02/learning.md",
- "02/life.md",
- "02/README02.md",
-
- */
 
 @end

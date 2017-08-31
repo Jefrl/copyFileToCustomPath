@@ -23,8 +23,6 @@
 /** 当前 View 是否在主窗口上 */
 - (BOOL)isShowKeyWindow;
 
-// 分类如果增添了属性, 那么要自己实现对应的 set, get 方法
-
 /** UIView.frame.origin.x */
 @property (nonatomic, assign) CGFloat x;
 /** UIView.frame.origin.y */

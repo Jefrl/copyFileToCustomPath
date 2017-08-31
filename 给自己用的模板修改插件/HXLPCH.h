@@ -23,6 +23,6 @@
 
 // 头文件
 #import "UIView+HXLGeometry.h"
-
+#import "SVProgressHUD.h"
 
 #endif /* HXLPCH_h */

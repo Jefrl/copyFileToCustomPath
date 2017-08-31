@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		A5DA777B1F5654DE00B4C44B /* UIView+HXLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DA777A1F5654DE00B4C44B /* UIView+HXLGeometry.m */; };
-		A5DA777D1F56707200B4C44B /* Test01.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5DA777C1F56707200B4C44B /* Test01.storyboard */; };
-		A5DA778B1F56D42000B4C44B /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = A5DA777F1F56D42000B4C44B /* LICENSE.txt */; };
-		A5DA778C1F56D42000B4C44B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = A5DA77801F56D42000B4C44B /* README.md */; };
 		A5DA778D1F56D42000B4C44B /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DA77831F56D42000B4C44B /* SVIndefiniteAnimatedView.m */; };
 		A5DA778E1F56D42000B4C44B /* SVProgressAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = A5DA77851F56D42000B4C44B /* SVProgressAnimatedView.m */; };
 		A5DA778F1F56D42000B4C44B /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A5DA77861F56D42000B4C44B /* SVProgressHUD.bundle */; };
@@ -28,9 +25,6 @@
 /* Begin PBXFileReference section */
 		A5DA77791F5654DE00B4C44B /* UIView+HXLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+HXLGeometry.h"; sourceTree = "<group>"; };
 		A5DA777A1F5654DE00B4C44B /* UIView+HXLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+HXLGeometry.m"; sourceTree = "<group>"; };
-		A5DA777C1F56707200B4C44B /* Test01.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test01.storyboard; sourceTree = "<group>"; };
-		A5DA777F1F56D42000B4C44B /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		A5DA77801F56D42000B4C44B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5DA77821F56D42000B4C44B /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
 		A5DA77831F56D42000B4C44B /* SVIndefiniteAnimatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVIndefiniteAnimatedView.m; sourceTree = "<group>"; };
 		A5DA77841F56D42000B4C44B /* SVProgressAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressAnimatedView.h; sourceTree = "<group>"; };
@@ -65,14 +59,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A5DA777E1F56D42000B4C44B /* SVProgressHUD */ = {
+		A5387D971F57AEC1007A151C /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				A5DA777F1F56D42000B4C44B /* LICENSE.txt */,
-				A5DA77801F56D42000B4C44B /* README.md */,
 				A5DA77811F56D42000B4C44B /* SVProgressHUD */,
+				A5E5C5DA1EFBC1FC007A07D6 /* AppDelegate.h */,
+				A5E5C5DB1EFBC1FC007A07D6 /* AppDelegate.m */,
+				A5DA77791F5654DE00B4C44B /* UIView+HXLGeometry.h */,
+				A5DA777A1F5654DE00B4C44B /* UIView+HXLGeometry.m */,
 			);
-			path = SVProgressHUD;
+			name = Other;
 			sourceTree = "<group>";
 		};
 		A5DA77811F56D42000B4C44B /* SVProgressHUD */ = {
@@ -88,7 +84,8 @@
 				A5DA77891F56D42000B4C44B /* SVRadialGradientLayer.h */,
 				A5DA778A1F56D42000B4C44B /* SVRadialGradientLayer.m */,
 			);
-			path = SVProgressHUD;
+			name = SVProgressHUD;
+			path = SVProgressHUD/SVProgressHUD;
 			sourceTree = "<group>";
 		};
 		A5E5C5CB1EFBC1FC007A07D6 = {
@@ -110,19 +107,9 @@
 		A5E5C5D61EFBC1FC007A07D6 /* 给自己用的模板修改插件 */ = {
 			isa = PBXGroup;
 			children = (
-				A5DA777E1F56D42000B4C44B /* SVProgressHUD */,
-				A5E5C5DA1EFBC1FC007A07D6 /* AppDelegate.h */,
-				A5E5C5DB1EFBC1FC007A07D6 /* AppDelegate.m */,
+				A5387D971F57AEC1007A151C /* Other */,
 				A5E5C5DD1EFBC1FC007A07D6 /* ViewController.h */,
 				A5E5C5DE1EFBC1FC007A07D6 /* ViewController.m */,
-				A5DA77791F5654DE00B4C44B /* UIView+HXLGeometry.h */,
-				A5DA777A1F5654DE00B4C44B /* UIView+HXLGeometry.m */,
-				A5DA777C1F56707200B4C44B /* Test01.storyboard */,
-				A5E5C5E01EFBC1FC007A07D6 /* Main.storyboard */,
-				A5E5C5E61EFBC1FC007A07D6 /* Assets.xcassets */,
-				A5E5C5E81EFBC1FC007A07D6 /* LaunchScreen.storyboard */,
-				A5E5C5EB1EFBC1FC007A07D6 /* Info.plist */,
-				A5E5C5E31EFBC1FC007A07D6 /* ___________.xcdatamodeld */,
 				A5E5C5D71EFBC1FC007A07D6 /* Supporting Files */,
 			);
 			path = "给自己用的模板修改插件";
@@ -131,6 +118,11 @@
 		A5E5C5D71EFBC1FC007A07D6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A5E5C5E01EFBC1FC007A07D6 /* Main.storyboard */,
+				A5E5C5E61EFBC1FC007A07D6 /* Assets.xcassets */,
+				A5E5C5E81EFBC1FC007A07D6 /* LaunchScreen.storyboard */,
+				A5E5C5EB1EFBC1FC007A07D6 /* Info.plist */,
+				A5E5C5E31EFBC1FC007A07D6 /* ___________.xcdatamodeld */,
 				A5E5C5D81EFBC1FC007A07D6 /* main.m */,
 				A5E5C5F11EFBC410007A07D6 /* HXLPCH.h */,
 			);
@@ -198,8 +190,6 @@
 				A5E5C5EA1EFBC1FC007A07D6 /* LaunchScreen.storyboard in Resources */,
 				A5DA778F1F56D42000B4C44B /* SVProgressHUD.bundle in Resources */,
 				A5E5C5E71EFBC1FC007A07D6 /* Assets.xcassets in Resources */,
-				A5DA777D1F56707200B4C44B /* Test01.storyboard in Resources */,
-				A5DA778B1F56D42000B4C44B /* LICENSE.txt in Resources */,
 				A5E5C5E21EFBC1FC007A07D6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,7 +201,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5DA778C1F56D42000B4C44B /* README.md in Sources */,
 				A5E5C5DF1EFBC1FC007A07D6 /* ViewController.m in Sources */,
 				A5E5C5E51EFBC1FC007A07D6 /* ___________.xcdatamodeld in Sources */,
 				A5E5C5DC1EFBC1FC007A07D6 /* AppDelegate.m in Sources */,
