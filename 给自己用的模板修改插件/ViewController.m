@@ -157,21 +157,21 @@ static NSInteger const day = 31;
     
     NSString *message;
     if (operationType == HXLPathEmpty) { // 1. 目标文件夹内部为空
-        message = @"正在执行, 生成日志目录结构的操作, 确认执行么 ?!";
+        message = @"正在执行, 生成目录结构操作, 确认执行么 ?!";
         [self handleFileOperationType:operationType message:message handler:^{
             [self createFileOperationType:operationType];
         }];
     }
     
     if (operationType == HXLPathExist) { // 2. 目标文件夹内部已有日志结构
-        message = @"正在执行, 增添文件或覆盖同名文件操作, 确认执行么 ?!";
+        message = @"正在执行, 增添与覆盖同名文件操作, 确认执行么 ?!";
         [self handleFileOperationType:operationType message:message handler:^{
             [self addFileOperationType:operationType];
         }];
     }
     
     if (operationType == HXLPathRemove) { // 3. 目标文件夹内部删除指定文件
-        message = @"正在执行, 删除指定文件操作, 确认执行么 ?!";
+        message = @"正在执行, 删除操作, 确认执行么 ?!";
         [self handleFileOperationType:operationType message:message handler:^{
             [self removeFileOperationType:HXLPathRemove];
         }];
@@ -251,6 +251,7 @@ static NSInteger const day = 31;
     
     for (NSString *fpath in fromPaths) {
         if ([fpath containsString:@".DS_Store"]) continue; // 过滤
+#warning 可以进一步增加功能, 将删除文件夹里的文件, 与确实要连着文件夹一起删除的需求, 外界再给一个设定值即可判断;
         if (![fpath containsString:@"."]) continue; // 只删除同名文件, 不删同名文件夹;
         [self removeSameNameFileFromPath:fpath andOperationType:operationType];
     }
