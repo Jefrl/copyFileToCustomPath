@@ -12,7 +12,8 @@
 typedef NS_ENUM(NSInteger, HXLPathType){
     HXLPathEmpty = 0, // 目标文件夹内为空 (用来新创建, 新的日志结构)
     HXLPathExist = 1,  // 目标文件夹内非空 (用来新增文件, 若同名则替换同名文件)
-    HXLPathRemove = 2 // 目标文件夹内删除指定文件
+    HXLPathRemove = 2, // 目标文件夹内删除指定文件
+    HXLPathSudoRemove = 3 // 目标文件夹内删除指定文件并包含文件夹 (权限扩大)
 };
 
 // 默认所有月份31天
@@ -22,8 +23,12 @@ static NSInteger const day = 31;
 @property (weak, nonatomic) IBOutlet UISwitch *createDiarySwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *updateDiarySwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *removeDiarySwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *sudoRemoveDiarySwitch;
 @property (weak, nonatomic) IBOutlet UITextField *updateStartDate;
 @property (weak, nonatomic) IBOutlet UITextField *removeStartDate;
+@property (weak, nonatomic) IBOutlet UITextField *sudoRemoveStartDate;
+@property (weak, nonatomic) IBOutlet UITextView *instructionTextView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewHeightLayoutConstraint;
 
 /** 指定修改范围 */
 @property (nonatomic, readwrite, assign) NSInteger appointCount;
@@ -47,10 +52,29 @@ static NSInteger const day = 31;
 #pragma mark =================== 文件路径设置区域 ===================
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     /** 01. fromPath 源文件夹路径 (即整理好的将要拷贝的输入文件夹路径) */
     /** 02. monthPath 月份文件夹路径 (即被操作的输出文件夹路径) */
     self.fromPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/from";
     self.monthPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/09月";
+    
+    [self setupTextView];
+}
+
+- (void)setupTextView
+{
+    self.instructionTextView.userInteractionEnabled = NO;
+    NSString *instructionText = @" 使用说明: \n 1. 所有操作都默认从 01 至 31 日; \n 2. 若设定起始日期,  那么操作范围从指定日期(包含当天) 至 31 日; \n 3. 添加操作时, 同名文件的覆盖,  以及删除指定文件的操作, 都只针对文件操作, 不处理文件夹; \n 4. 注意, 最后一个操作表示扩展了删除操作权限, 文件夹也可以删除 !!!";
+    
+    NSArray *array = [instructionText componentsSeparatedByString:@"\n"];
+    CGFloat height = 0;
+    for (NSString *string in array) {
+        CGSize TextSize = [string boundingRectWithSize:CGSizeMake(HXL_SCREEN_WIDTH - 20, HXL_SCREEN_HEIGHT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : FONT_13} context:nil].size;
+        height += TextSize.height;
+    }
+    self.instructionTextView.text = instructionText;
+    self.textViewHeightLayoutConstraint.constant = height + 10;
+    [self.view layoutIfNeeded];
 }
 
 #pragma mark ===================== GUI 图形界面 segue 区域 =====================
@@ -60,42 +84,78 @@ static NSInteger const day = 31;
     if (sender.isOn) {
         self.updateDiarySwitch.on = NO;
         self.removeDiarySwitch.on = NO;
-        [self.view endEditing:YES];
+        self.sudoRemoveDiarySwitch.on = NO;
         
         self.updateStartDate.enabled = NO;
         self.updateStartDate.textColor = [UIColor grayColor];
         self.removeStartDate.enabled = NO;
         self.removeStartDate.textColor = [UIColor grayColor];
+        self.sudoRemoveStartDate.enabled = NO;
+        self.sudoRemoveStartDate.textColor = [UIColor grayColor];
+        [self.view endEditing:YES];
     }
 }
 - (IBAction)updateSwitch:(UISwitch *)sender {
-    sender.on = !sender.on;
-    self.updateStartDate.enabled = NO;
     
     if (sender.isOn) {
         self.createDiarySwitch.on = NO;
         self.removeDiarySwitch.on = NO;
+        self.sudoRemoveDiarySwitch.on = NO;
         
         self.updateStartDate.enabled = YES;
-        [self.updateStartDate becomeFirstResponder];
         self.updateStartDate.textColor = [UIColor blackColor];
         self.removeStartDate.enabled = NO;
         self.removeStartDate.textColor = [UIColor grayColor];
+        self.sudoRemoveStartDate.enabled = NO;
+        self.sudoRemoveStartDate.textColor = [UIColor grayColor];
+        
+        [self.updateStartDate becomeFirstResponder];
+    }
+    else {
+        self.updateStartDate.enabled = NO;
     }
 }
 - (IBAction)removeSwitch:(UISwitch *)sender {
-    sender.on = !sender.on;
-    self.removeStartDate.enabled = NO;
     
     if (sender.isOn) {
         self.createDiarySwitch.on = NO;
         self.updateDiarySwitch.on = NO;
+        self.sudoRemoveDiarySwitch.on = NO;
+        
         self.updateStartDate.enabled = NO;
         self.updateStartDate.textColor = [UIColor grayColor];
         self.removeStartDate.enabled = YES;
         self.removeStartDate.textColor = [UIColor blackColor];
+        self.sudoRemoveStartDate.enabled = NO;
+        self.sudoRemoveStartDate.textColor = [UIColor grayColor];
+        
         [self.removeStartDate becomeFirstResponder];
     }
+    else {
+        self.removeStartDate.enabled = NO;
+    }
+}
+
+- (IBAction)sudoRemoveSwitch:(UISwitch *)sender {
+    
+    if (sender.isOn) {
+        self.createDiarySwitch.on = NO;
+        self.updateDiarySwitch.on = NO;
+        self.removeDiarySwitch.on = NO;
+        
+        self.updateStartDate.enabled = NO;
+        self.updateStartDate.textColor = [UIColor grayColor];
+        self.removeStartDate.enabled = NO;
+        self.removeStartDate.textColor = [UIColor grayColor];
+        self.sudoRemoveStartDate.enabled = YES;
+        self.sudoRemoveStartDate.textColor = [UIColor blackColor];
+        
+        [self.sudoRemoveStartDate becomeFirstResponder];
+    }
+    else {
+        self.sudoRemoveStartDate.enabled = NO;
+    }
+    
 }
 
 - (IBAction)generateBtnClick:(UIButton *)sender {
@@ -103,6 +163,7 @@ static NSInteger const day = 31;
     self.createDiarySwitch.isOn ? flag++ : flag;
     self.updateDiarySwitch.isOn ? flag++ : flag;
     self.removeDiarySwitch.isOn ? flag++ : flag;
+    self.sudoRemoveDiarySwitch.isOn ? flag++ : flag;
     
     if (flag != 1) {
         [SVProgressHUD showErrorWithStatus:@"请选择一个! 你想执行操作 ?"];
@@ -122,9 +183,13 @@ static NSInteger const day = 31;
         self.operation = HXLPathRemove;
         self.appointCount = [self.removeStartDate.text integerValue];
     }
+    if (self.sudoRemoveDiarySwitch.isOn) {
+        self.operation =  HXLPathSudoRemove;
+        self.appointCount = [self.sudoRemoveStartDate.text integerValue];
+    }
     
-    if ((self.updateDiarySwitch.isOn || self.removeDiarySwitch.isOn) && (self.appointCount < 1 || self.appointCount > 31)) {
-        [SVProgressHUD showErrorWithStatus:@"起始日期设置, 应该在 01 - 31 之间"];
+    if (flag == 1 && (self.appointCount < 1 || self.appointCount > 31)) {
+        [SVProgressHUD showErrorWithStatus:@"起始日期的设置, 应该在 01 - 31 之间"];
         [SVProgressHUD dismissWithDelay:2];
         return;
     }
@@ -157,29 +222,35 @@ static NSInteger const day = 31;
     
     NSString *message;
     if (operationType == HXLPathEmpty) { // 1. 目标文件夹内部为空
-        message = @"正在执行, 生成目录结构操作, 确认执行么 ?!";
-        [self handleFileOperationType:operationType message:message handler:^{
+        message = @"生成目录结构操作, 确认执行么 !";
+        [self handleFileOperationMessage:message handler:^{
             [self createFileOperationType:operationType];
         }];
     }
     
     if (operationType == HXLPathExist) { // 2. 目标文件夹内部已有日志结构
-        message = @"正在执行, 增添与覆盖同名文件操作, 确认执行么 ?!";
-        [self handleFileOperationType:operationType message:message handler:^{
+        message = @"增添文件, 覆盖同名文件的操作, 确认执行么 ?";
+        [self handleFileOperationMessage:message handler:^{
             [self addFileOperationType:operationType];
         }];
     }
     
     if (operationType == HXLPathRemove) { // 3. 目标文件夹内部删除指定文件
-        message = @"正在执行, 删除操作, 确认执行么 ?!";
-        [self handleFileOperationType:operationType message:message handler:^{
-            [self removeFileOperationType:HXLPathRemove];
+        message = @"仅删除指定文件操作(不包含文件夹), 确认执行么 ?";
+        [self handleFileOperationMessage:message handler:^{
+            [self removeFileOperationType:operationType];
+        }];
+    }
+    if (operationType == HXLPathSudoRemove) { // 3. 目标文件夹内部删除指定
+        message = @"注意: 指定的文件夹也会删除, 确认执行么 ?";
+        [self handleFileOperationMessage:message handler:^{
+            [self removeFileOperationType:operationType];
         }];
     }
 }
 
 /** UIAlertController && UIAlertAction 警告提示 */
-- (void)handleFileOperationType:(HXLPathType)operationType message:(NSString *)message handler:( void (^)())myBlock
+- (void)handleFileOperationMessage:(NSString *)message handler:( void (^)())myBlock
 {
     UIAlertController *actionSheetController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
     [actionSheetController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
@@ -215,7 +286,7 @@ static NSInteger const day = 31;
         }
     }
     
-    if (operationType == HXLPathExist || operationType == HXLPathRemove) {
+    if (operationType != HXLPathEmpty) {
         // 校验是否为空
         if (contentArray.count == 1) { // 如果 只有系统文件 ".DS_Store"
             NSString *mothFileName = [self.monthPath componentsSeparatedByString:@"/"].lastObject;
@@ -251,8 +322,10 @@ static NSInteger const day = 31;
     
     for (NSString *fpath in fromPaths) {
         if ([fpath containsString:@".DS_Store"]) continue; // 过滤
-#warning 可以进一步增加功能, 将删除文件夹里的文件, 与确实要连着文件夹一起删除的需求, 外界再给一个设定值即可判断;
-        if (![fpath containsString:@"."]) continue; // 只删除同名文件, 不删同名文件夹;
+        if (operationType == HXLPathRemove) { // 只删除同名文件, 不删同名文件夹;
+            if (![fpath containsString:@"."]) continue;
+        } else { /** 可以删除文件夹, 不过滤文件夹路径 */}
+        
         [self removeSameNameFileFromPath:fpath andOperationType:operationType];
     }
     [SVProgressHUD showSuccessWithStatus:@"删除操作已完成 !"];
@@ -309,8 +382,8 @@ static NSInteger const day = 31;
         if ([fpath isEqualToString:mpath] || ![mpath containsString:@"/"]) continue; // 月份直接目录下的所有文件月, 文件夹, 避免用户误操作的安全隐患;
         
         NSString *newPath = [mpath substringFromIndex:[mpath rangeOfString:@"/"].location + 1]; // 进入操作目录区
-        if (HXLPathRemove == operationType) { // 只有确定的删除操作, 才可以删除同名文件夹
-        } else { // 添加文件与覆盖同名文件的操作, 只处理同名文件, 绝不处理同名文件夹, 坚持安全的设计原则 !!
+        if (HXLPathSudoRemove == operationType) { // 只有最大权限的 HXLSudoRemove 删除操作, 才可以删除同名文件夹
+        } else { // 添加操作中的覆盖同名文件, 与仅仅删除文件的操作, 只处理同名文件, 绝不处理同名文件夹, 坚持安全的设计原则 !!
             if (![newPath containsString:@"."]) continue;
         }
         
