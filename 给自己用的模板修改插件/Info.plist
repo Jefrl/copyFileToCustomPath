@@ -20,18 +20,18 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>NSLocationUsageDescription</key>
-	<string>kkkkkkkk</string>
 	<key>NSContactsUsageDescription</key>
 	<string>k01</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>k02</string>
+	<key>NSLocationUsageDescription</key>
+	<string>kkkkkkkk</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>k03</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

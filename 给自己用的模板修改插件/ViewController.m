@@ -55,26 +55,10 @@ static NSInteger const day = 31;
     
     /** 01. fromPath 源文件夹路径 (即整理好的将要拷贝的输入文件夹路径) */
     /** 02. monthPath 月份文件夹路径 (即被操作的输出文件夹路径) */
-    self.fromPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/from";
-    self.monthPath = @"/Users/Jefrl/Desktop/便利小插件/测试文件/09月";
+    self.fromPath = @"";  // <#输入路径#>如: @"/Users/Jefrl/Desktop/便利小插件/测试文件/from";
+    self.monthPath = @""; // <#输出路径#>如: @"/Users/Jefrl/Desktop/便利小插件/测试文件/09月";
     
     [self setupTextView];
-}
-
-- (void)setupTextView
-{
-    self.instructionTextView.userInteractionEnabled = NO;
-    NSString *instructionText = @" 使用说明: \n 1. 所有操作都默认从 01 至 31 日; \n 2. 若设定起始日期,  那么操作范围从指定日期(包含当天) 至 31 日; \n 3. 添加操作时, 同名文件的覆盖,  以及删除指定文件的操作, 都只针对文件操作, 不处理文件夹; \n 4. 注意, 最后一个操作表示扩展了删除操作权限, 文件夹也可以删除 !!!";
-    
-    NSArray *array = [instructionText componentsSeparatedByString:@"\n"];
-    CGFloat height = 0;
-    for (NSString *string in array) {
-        CGSize TextSize = [string boundingRectWithSize:CGSizeMake(HXL_SCREEN_WIDTH - 20, HXL_SCREEN_HEIGHT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : FONT_13} context:nil].size;
-        height += TextSize.height;
-    }
-    self.instructionTextView.text = instructionText;
-    self.textViewHeightLayoutConstraint.constant = height + 10;
-    [self.view layoutIfNeeded];
 }
 
 #pragma mark ===================== GUI 图形界面 segue 区域 =====================
@@ -166,7 +150,7 @@ static NSInteger const day = 31;
     self.sudoRemoveDiarySwitch.isOn ? flag++ : flag;
     
     if (flag != 1) {
-        [SVProgressHUD showErrorWithStatus:@"请选择一个! 你想执行操作 ?"];
+        [SVProgressHUD showErrorWithStatus:@"请选择一个, 你想执行的操作 !"];
         [SVProgressHUD dismissWithDelay:2];
         return;
     }
@@ -188,7 +172,7 @@ static NSInteger const day = 31;
         self.appointCount = [self.sudoRemoveStartDate.text integerValue];
     }
     
-    if (flag == 1 && (self.appointCount < 1 || self.appointCount > 31)) {
+    if (flag == 1 && self.operation != HXLPathEmpty && (self.appointCount < 1 || self.appointCount > 31)) {
         [SVProgressHUD showErrorWithStatus:@"起始日期的设置, 应该在 01 - 31 之间"];
         [SVProgressHUD dismissWithDelay:2];
         return;
@@ -212,17 +196,34 @@ static NSInteger const day = 31;
     [self.view endEditing:YES];
 }
 
+/** textView 的搭建 */
+- (void)setupTextView
+{
+    self.instructionTextView.userInteractionEnabled = NO;
+    NSString *instructionText = @" 使用说明: \n 1. 所有操作都默认从 01 至 31 日; \n 2. 若设定起始日期,  那么操作范围从指定日期(包含当天) 至 31 日; \n 3. 添加操作时, 同名文件的覆盖,  以及删除指定文件的操作, 都只针对文件操作, 不处理文件夹; \n 4. 注意, 最后一个操作表示扩展了删除操作权限, 文件夹也可以删除 !!!";
+    
+    NSArray *array = [instructionText componentsSeparatedByString:@"\n"];
+    CGFloat height = 0;
+    for (NSString *string in array) {
+        CGSize TextSize = [string boundingRectWithSize:CGSizeMake(HXL_SCREEN_WIDTH - 20, HXL_SCREEN_HEIGHT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : FONT_13} context:nil].size;
+        height += TextSize.height;
+    }
+    self.instructionTextView.text = instructionText;
+    self.textViewHeightLayoutConstraint.constant = height + 10;
+    [self.view layoutIfNeeded];
+}
+
 /** 生成需求文件 */
 - (void)generateRequireFile:(HXLPathType)operationType {
     if (self.fromPath.length == 0 || self.monthPath.length == 0) {
-        [SVProgressHUD showErrorWithStatus:@"NO ! 空路径 !!!"];
+        [SVProgressHUD showErrorWithStatus:@"NO ! 空路径, 请填入输入输出路径 !!!"];
         [SVProgressHUD dismissWithDelay:2];
         return;
     }
     
     NSString *message;
     if (operationType == HXLPathEmpty) { // 1. 目标文件夹内部为空
-        message = @"生成目录结构操作, 确认执行么 !";
+        message = @"生成目录结构操作, 确认执行么 ?";
         [self handleFileOperationMessage:message handler:^{
             [self createFileOperationType:operationType];
         }];
