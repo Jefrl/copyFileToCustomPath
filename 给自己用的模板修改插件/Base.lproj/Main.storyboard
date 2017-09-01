@@ -293,14 +293,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="576.79999999999995" y="114.69265367316342"/>
+            <point key="canvasLocation" x="850" y="115"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="pAq-ac-C7H">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="XXM-bA-vjo" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" barStyle="black" id="05G-2R-mqN">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="05G-2R-mqN">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
