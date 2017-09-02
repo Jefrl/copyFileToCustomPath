@@ -3,17 +3,16 @@
 # 09 - 01
 # 工具篇 - 日志目录便利创建器
 #### 摘要:
-* [linksAndPicturePreview](#lapp) -- <span id="bk-lapp"> 👈</span>
-* [00. 碎碎念](#00) -- <span id="bk00"> 👈 </span> 
-* [01. 文字说明](#01) -- <span id="bk01"> 👈 </span> 
-* [02. 图片说明](#02) -- <span id="bk02"> 👈 </span> 
-* [03. 更新说明](#03) -- <span id="bk03"> 👈 </span>
+* [00. 碎碎念](https://github.com/Jefrl/copyFileToCustomPath#-00-碎碎念--️️️) -- <span id="bk00"> 👈 </span> 
+* [01. 文字说明](https://github.com/Jefrl/copyFileToCustomPath#-01-文字说明--️️️) -- <span id="bk01"> 👈 </span> 
+* [02. 图片说明](https://github.com/Jefrl/copyFileToCustomPath#-02-图片说明--️️️) -- <span id="bk02"> 👈 </span> 
+* [03. 更新说明](https://github.com/Jefrl/copyFileToCustomPath#-03-更新说明--️️️) -- <span id="bk03"> 👈 </span>
 
 
-## <span id="00"> 00. 碎碎念 </span> [⚡️⚡️⚡️](#bk00)
+## <span id="00"> 00. 碎碎念 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath#bk00)
 * 自己用 markDown 编写日记的模板格式, 文件数目, 内部文件夹, 时不时会调整下, 然后需要统一布局到当前月份子目录内, 详见后面说明与动图; 
 
-## <span id="01"> 01. 文字说明 </span> [⚡️⚡️⚡️](#bk01)
+## <span id="01"> 01. 文字说明 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath/README.md#bk01)
 1. 所有操作都默认从 01 至 31 日;  
 
 2. 若设定起始日期,  那么操作范围从指定日期(包含当天) 至 31 日;  
@@ -22,7 +21,7 @@
 
 4. 最后一个操作代表日期内的文件夹也一并删除,  确实需要删除文件夹时使用 !!!
 
-## <span id="02"> 02. 图片说明 </span> [⚡️⚡️⚡️](#bk02)
+## <span id="02"> 02. 图片说明 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath#摘要)
 #### 一. 动图总览
  
 * ![](images/01.gif)
@@ -75,7 +74,7 @@
  
  * ![13](images/Snip20170831_13.png)  
 
-## <span id="03"> 03. 更新说明 </span> [⚡️⚡️⚡️](#bk03)
+## <span id="03"> 03. 更新说明 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath#摘要)
 
 一. 初始只具备创建日志结构功能;
 
