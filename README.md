@@ -12,7 +12,7 @@
 ## <span id="00"> 00. 碎碎念 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath#摘要)
 * 自己用 markDown 编写日记的模板格式, 文件数目, 内部文件夹, 时不时会调整下, 然后需要统一布局到当前月份子目录内, 详见后面说明与动图; 
 
-## <span id="01"> 01. 文字说明 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath/README.md#摘要)
+## <span id="01"> 01. 文字说明 </span> [⚡️⚡️⚡️](https://github.com/Jefrl/copyFileToCustomPath#摘要)
 1. 所有操作都默认从 01 至 31 日;  
 
 2. 若设定起始日期,  那么操作范围从指定日期(包含当天) 至 31 日;  
